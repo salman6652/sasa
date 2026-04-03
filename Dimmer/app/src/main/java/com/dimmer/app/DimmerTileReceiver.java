@@ -1,26 +1,23 @@
 package com.dimmer.app;
 
 import android.content.Intent;
-import android.os.Build;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 
 public class DimmerTileReceiver extends TileService {
 
     @Override
-    public void onStartListening() {
-        super.onStartListening();
-        updateTile();
-    }
+    public void onTileRemoved() {}
 
     @Override
     public void onClick() {
         Tile tile = getQsTile();
+        if (tile == null) return;
         if (tile.getState() == Tile.STATE_ACTIVE) {
             stopService(new Intent(this, DimmerService.class));
             tile.setState(Tile.STATE_INACTIVE);
         } else {
-            startService(new Intent(this, DimmerService.class));
+            startForegroundService(new Intent(this, DimmerService.class));
             tile.setState(Tile.STATE_ACTIVE);
         }
     }
