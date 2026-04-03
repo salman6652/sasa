@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout
@@ -19,17 +19,16 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Setup Android SDK
+      - name: Setup Android SDK and accept licenses
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME"
-
-      - name: Accept licenses
-        run: yes | sdkmanager --licenses || true
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
 
       - name: Build debug APK
         working-directory: Dimmer
         run: |
-          gradle wrapper
+          export ANDROID_HOME=$HOME/Library/Android/sdk
+          gradle wrapper --gradle-version=8.4
           chmod +x ./gradlew
           ./gradlew assembleDebug --no-daemon
 
